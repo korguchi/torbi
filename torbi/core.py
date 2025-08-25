@@ -9,7 +9,7 @@ import torch
 import torchutil
 
 import torbi
-from torbi import decode
+from . import decode
 
 
 ###############################################################################

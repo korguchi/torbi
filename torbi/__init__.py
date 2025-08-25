@@ -22,9 +22,17 @@ from .config.static import *
 ###############################################################################
 
 import torch
-from . import _C
+
+# Import decode function first to avoid circular import
 from .viterbi import decode
+
+# Import C extension
+from . import _C
+
+# Import all functions from core
 from .core import *
+
+# Import other modules
 from .chunk import chunk
 from . import data
 from . import evaluate

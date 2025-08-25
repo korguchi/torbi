@@ -31,6 +31,9 @@ def get_extensions():
 
     if use_cuda:
         warnings.warn(f"Building torbi with CUDA using CUDA_HOME={CUDA_HOME}")
+        # Disable py_limited_api for CUDA builds due to Py_buffer compatibility issues
+        global py_limited_api
+        py_limited_api = False
 
     windows = platform.system() == "Windows"
     macos = platform.system() == "Darwin"
@@ -53,15 +56,17 @@ def get_extensions():
             # '-lomp',
             "-O3" if not debug_mode else "-O0",
             "-fdiagnostics-color=always",
-            "-DPy_LIMITED_API=0x03090000",  # min CPython version 3.9
         ]
+        if not use_cuda:
+            cxx_args.append("-DPy_LIMITED_API=0x03090000")  # Only add for non-CUDA builds
     else: # linux
         cxx_args = [
             "-O3" if not debug_mode else "-O0",
             "-fdiagnostics-color=always",
             "-fopenmp",
-            "-DPy_LIMITED_API=0x03090000",  # min CPython version 3.9
         ]
+        if not use_cuda:
+            cxx_args.append("-DPy_LIMITED_API=0x03090000")  # Only add for non-CUDA builds
 
     extra_link_args = []
     extra_compile_args = {
